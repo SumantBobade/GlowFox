@@ -20,7 +20,7 @@ function SignIn() {
       localStorage.setItem("token", res.data.token);
 
       // Redirect after login
-      navigate("/explore");
+      navigate("/");
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
     }

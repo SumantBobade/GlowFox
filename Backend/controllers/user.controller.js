@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from "../utils/token.js";
+import {setUser, getUser} from "../services/auth.js";
 
 export async function signUpHandler(req, res) {
   try {
@@ -46,20 +47,32 @@ export async function loginHandler(req, res) {
         .status(401)
         .json({ status: "Fail", message: "Password Incorrect" });
     }
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    // const accessToken = generateAccessToken(user);
+    // const refreshToken = generateRefreshToken(user);
 
-    user.refreshToken = refreshToken;
-    await user.save();
+    // user.refreshToken = refreshToken;
+    // await user.save();
 
-    return res
-      .cookie("refereshToken", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict"
-      })
-      .status(200)
-      .json({ status: "Success", message: "Login Successful", refreshToken });
+    // return res
+    //   .cookie("refereshToken", refreshToken, {
+    //     httpOnly: true,
+    //     secure: true,
+    //     sameSite: "strict"
+    //   })
+    //   .status(200)
+    //   .json({ status: "Success", message: "Login Successful", refreshToken });
+    const token = setUser(user);
+    res.cookie("uid", token)
+    return res.status(200).json({
+      status: "Success",
+      message: "Login Successful",
+      token, // ✅ THIS FIXES EVERYTHING
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (err) {
     console.log("Error Occured :" + err);
     return res.status(500).json({ message: "Server error" });

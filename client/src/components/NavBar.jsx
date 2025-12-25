@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../services/AuthContext.jsx";
 
 function NavBar() {
   const [open, setOpen] = useState(false);
+  const { isLoggedIn, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/signin");
+  };
 
   const navItemClass = ({ isActive }) =>
     `relative cursor-pointer transition
@@ -15,7 +23,7 @@ function NavBar() {
     <header className="sticky top-0 z-50 bg-black backdrop-blur border-b border-gray-800">
       <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between text-white">
 
-        {/* Logo → Home */}
+        {/* Logo */}
         <Link to="/" className="text-2xl font-extrabold tracking-wide">
           Glow<span className="text-orange-500">Fox</span>
         </Link>
@@ -30,18 +38,37 @@ function NavBar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex gap-4">
-          <Link
-            to="/signin"
-            className="px-4 py-2 text-sm border border-white/70 rounded hover:bg-white hover:text-black transition"
-          >
-            Login
-          </Link>
-          <Link
-            to="/signup"
-            className="px-4 py-2 text-sm bg-orange-500 text-black rounded hover:bg-orange-400 transition"
-          >
-            Sign Up
-          </Link>
+          {!isLoggedIn ? (
+            <>
+              <Link
+                to="/signin"
+                className="px-4 py-2 text-sm border border-white/70 rounded hover:bg-white hover:text-black transition"
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="px-4 py-2 text-sm bg-orange-500 text-black rounded hover:bg-orange-400 transition"
+              >
+                Sign Up
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/profile"
+                className="px-4 py-2 text-sm border border-white/70 rounded hover:bg-white hover:text-black transition"
+              >
+                View Profile
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm bg-orange-500 text-black rounded hover:bg-orange-400 transition"
+              >
+                Logout
+              </button>
+            </>
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -65,20 +92,43 @@ function NavBar() {
           </ul>
 
           <div className="flex gap-4">
-            <Link
-              to="/signin"
-              className="flex-1 px-4 py-2 border border-white rounded hover:bg-white hover:text-black transition"
-              onClick={() => setOpen(false)}
-            >
-              Login
-            </Link>
-            <Link
-              to="/signup"
-              className="flex-1 px-4 py-2 bg-orange-500 text-black rounded hover:bg-orange-400 transition"
-              onClick={() => setOpen(false)}
-            >
-              Sign Up
-            </Link>
+            {!isLoggedIn ? (
+              <>
+                <Link
+                  to="/signin"
+                  className="flex-1 px-4 py-2 border border-white rounded hover:bg-white hover:text-black transition"
+                  onClick={() => setOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="flex-1 px-4 py-2 bg-orange-500 text-black rounded hover:bg-orange-400 transition"
+                  onClick={() => setOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/profile"
+                  className="flex-1 px-4 py-2 border border-white rounded hover:bg-white hover:text-black transition"
+                  onClick={() => setOpen(false)}
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setOpen(false);
+                  }}
+                  className="flex-1 px-4 py-2 bg-orange-500 text-black rounded hover:bg-orange-400 transition"
+                >
+                  Logout
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
