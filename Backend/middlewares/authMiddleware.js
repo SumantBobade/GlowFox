@@ -1,15 +1,20 @@
 import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
 
-export const protect = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token) return res.status(401).json({ message: "Not authorized" });
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch {
-    res.status(401).json({ message: "Invalid token" });
+const userVerification = (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.json({ status: false });
   }
-};
+  jwt.verify(token, process.env.SECRET, async(err, data) => {
+    if (err) {
+      return res.json({ status: false });
+    } else {
+      const user = await User.findById(data.id);
+      if (user) return res.json({ status: true, user: user.name });
+      else return res.json({ status: false });
+    }
+  })
+}
+
+export default userVerification;

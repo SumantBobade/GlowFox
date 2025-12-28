@@ -20,3 +20,8 @@ export async function gameDetailsHandler(req, res) {
     res.status(400).json({ message: error.message });
   }
 }
+
+export const getMyGames = async (req, res) => {
+  const games = await Game.find({ creator: req.user._id });
+  res.json(games);
+};

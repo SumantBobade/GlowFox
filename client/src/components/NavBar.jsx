@@ -33,7 +33,10 @@ function NavBar() {
           <NavLink to="/" className={navItemClass}>Home</NavLink>
           <NavLink to="/about" className={navItemClass}>About</NavLink>
           <NavLink to="/company" className={navItemClass}>Company</NavLink>
-          <NavLink to="/games" className={navItemClass}>Games</NavLink>
+          
+          {isLoggedIn ? (
+            <NavLink to="/published-games" className={navItemClass}>Published</NavLink>
+          ):<NavLink to="/games" className={navItemClass}>Games</NavLink>}
         </ul>
 
         {/* Desktop Actions */}
