@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
-import api from "../api/axios"; // your centralized axios instance
+import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
+import api from "../services/api"
 
 function ExploreGame() {
   const [games, setGames] = useState([]);
+  const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
+  
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -40,7 +47,6 @@ function ExploreGame() {
   return (
     <section className="min-h-screen bg-black text-white py-20">
       <div className="max-w-7xl mx-auto px-6">
-
         {/* Header */}
         <h1 className="text-3xl font-bold mb-12">
           Explore <span className="text-orange-500">Games</span>
@@ -86,6 +92,7 @@ function ExploreGame() {
           </p>
         )}
       </div>
+      <ToastContainer/>
     </section>
   );
 }

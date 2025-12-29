@@ -6,6 +6,7 @@ import path from 'path';
 
 import userRoute from './routers/user.route.js';
 import gamesRoute from "./routers/game.route.js"
+import exploreRoute from "./routers/explore.route.js";
 import mongoose from 'mongoose';
 
 const app = express();
@@ -39,6 +40,7 @@ mongoose.connect(process.env.MONGO_URL)
 
 app.use("/auth", userRoute);
 app.use("/games", gamesRoute);
+app.use("/explore", exploreRoute);
 app.get("/test", (req, res) => {
   res.render("create-game");
 });

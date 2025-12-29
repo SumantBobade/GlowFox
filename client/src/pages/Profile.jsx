@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import api from "../api/axios";
+import api from "../services/api";
+import { Link } from "react-router-dom";
 
 function Profile() {
   const [user, setUser] = useState(null);
@@ -118,9 +119,11 @@ function Profile() {
             </button>
           )}
 
-          <button className="px-6 py-2 bg-orange-500 text-black rounded">
+          <Link to="/submit-game">
+          <button className="px-6 py-2 bg-orange-500 text-black rounded hover:bg-orange-400 cursor-default">
             Publish Game
-          </button>
+            </button>
+            </Link>
         </div>
 
         {/* My Games */}

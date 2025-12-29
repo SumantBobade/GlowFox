@@ -12,7 +12,7 @@ export async function gameDetailsHandler(req, res) {
       title,
       description,
       image: imageUrl,
-      createdBy: req.user?.id, // optional auth
+      createdBy: req.user?._id, // optional auth
     });
 
     res.status(201).json(game);

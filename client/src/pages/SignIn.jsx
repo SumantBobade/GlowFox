@@ -1,66 +1,55 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { useAuth } from "../services/AuthContext";
+import api from "../services/api";
+import "react-toastify/dist/ReactToastify.css";
 
 function SignIn() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [inputValue, setInputValue] = useState({
     email: "",
     password: "",
   });
 
-
   const { email, password } = inputValue;
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
-    setInputValue({
-      ...inputValue,
+    setInputValue((prev) => ({
+      ...prev,
       [name]: value,
-    });
-  };
-
-  const handleError = (err) => {
-    toast.error(err, {
-      position: "top-left",
-    });
-  };
-
-  const handleSuccess = (message) => {
-    toast.success(message, {
-      position: "top-left",
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const {data} = await axios.post(
-        "http://localhost:5001/auth/login", {
-        ...inputValue,
-      },
-        { withCredentials: true }
-      );
-      console.log(data);
-      const { success, message } = data;
+      const { data } = await api.post("/auth/login", inputValue);
+
+      const { success, message, token } = data;
+
       if (success) {
-        handleSuccess(message);
+        toast.success(message, { position: "top-left" });
+
+        // 🔑 THIS IS THE KEY LINE
+        login(token ?? "authenticated");
+
         setTimeout(() => {
           navigate("/");
-        }, 1000);
+        }, 500);
       } else {
-        handleError(message);
+        toast.error(message, { position: "top-left" });
       }
     } catch (err) {
-      console.log(err);
+      toast.error("Login failed", { position: "top-left" });
+      console.error(err);
     }
-    setInputValue({
-      ...inputValue,
-      email: "",
-      password: "",
-    });
+
+    setInputValue({ email: "", password: "" });
   };
 
   return (
@@ -73,7 +62,6 @@ function SignIn() {
           Sign In to <span className="text-orange-500">GlowFox</span>
         </h2>
 
-        {/* Email */}
         <div className="mb-4">
           <label className="block text-sm mb-2 text-gray-300">Email</label>
           <input
@@ -81,13 +69,11 @@ function SignIn() {
             name="email"
             value={email}
             required
-            placeholder="Enter your email"
-            className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
             onChange={handleOnChange}
+            className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
           />
         </div>
 
-        {/* Password */}
         <div className="mb-4">
           <label className="block text-sm mb-2 text-gray-300">Password</label>
           <input
@@ -95,13 +81,11 @@ function SignIn() {
             name="password"
             value={password}
             required
-            placeholder="Enter your password"
-            className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
             onChange={handleOnChange}
+            className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
           />
         </div>
 
-        {/* Button */}
         <button
           type="submit"
           className="w-full bg-orange-500 text-black py-2 mt-6 rounded font-semibold hover:bg-orange-400 transition"
@@ -119,7 +103,8 @@ function SignIn() {
           </span>
         </p>
       </form>
-      <ToastContainer/>
+
+      <ToastContainer />
     </div>
   );
 }

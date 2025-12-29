@@ -1,49 +1,47 @@
 import React, { useState } from "react";
-import api from "../api/axios";
+import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function CreateGame() {
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title || !description) {
-      alert("Title and description are required");
+    if (!title.trim() || !description.trim()) {
+      toast.error("Title and description are required");
       return;
     }
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    if (image) {
-      formData.append("image", image);
-    }
+    formData.append("title", title.trim());
+    formData.append("description", description.trim());
+    if (image) formData.append("image", image);
 
     try {
       setLoading(true);
 
-      await api.post("/games", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await api.post("/games", formData);
 
-      alert("Game created successfully!");
+      toast.success("Game created successfully");
       navigate("/explore");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to create game");
+      toast.error(
+        err.response?.data?.message || "Failed to create game"
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center py-20">
+    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4 py-20">
       <form
         onSubmit={handleSubmit}
         className="bg-gray-900 border border-gray-800 p-8 rounded-xl w-full max-w-lg shadow-xl"
@@ -59,10 +57,10 @@ function CreateGame() {
           </label>
           <input
             type="text"
-            className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
-            placeholder="Enter game title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter game title"
+            className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
           />
         </div>
 
@@ -73,23 +71,23 @@ function CreateGame() {
           </label>
           <textarea
             rows="4"
-            className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
-            placeholder="Describe your game idea"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe your game idea"
+            className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500 resize-none"
           />
         </div>
 
         {/* Image */}
         <div className="mb-6">
           <label className="block text-sm mb-2 text-gray-300">
-            Game Image
+            Game Image (optional)
           </label>
           <input
             type="file"
             accept="image/*"
-            className="text-sm text-gray-300"
             onChange={(e) => setImage(e.target.files[0])}
+            className="block w-full text-sm text-gray-300"
           />
         </div>
 

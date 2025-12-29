@@ -1,20 +1,26 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 
-const userVerification = (req, res) => {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.json({ status: false });
-  }
-  jwt.verify(token, process.env.SECRET, async(err, data) => {
-    if (err) {
-      return res.json({ status: false });
-    } else {
-      const user = await User.findById(data.id);
-      if (user) return res.json({ status: true, user: user.name });
-      else return res.json({ status: false });
+const userVerification = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
-  })
-}
+
+    const decoded = jwt.verify(token, process.env.SECRET);
+
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    req.user = user;   // attach authenticated user
+    return next();     // allow request to continue
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+};
 
 export default userVerification;
