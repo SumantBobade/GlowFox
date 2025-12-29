@@ -1,29 +1,66 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState({
+    email: "",
+    password: "",
+  });
+
+
+  const { email, password } = inputValue;
+
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setInputValue({
+      ...inputValue,
+      [name]: value,
+    });
+  };
+
+  const handleError = (err) => {
+    toast.error(err, {
+      position: "top-left",
+    });
+  };
+
+  const handleSuccess = (message) => {
+    toast.success(message, {
+      position: "top-left",
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:5001/auth/login", {
-        email,
-        password,
-      });
-
-      // Save token
-      localStorage.setItem("token", res.data.token);
-
-      // Redirect after login
-      navigate("/");
+      const {data} = await axios.post(
+        "http://localhost:5001/auth/login", {
+        ...inputValue,
+      },
+        { withCredentials: true }
+      );
+      console.log(data);
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } else {
+        handleError(message);
+      }
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed");
+      console.log(err);
     }
+    setInputValue({
+      ...inputValue,
+      email: "",
+      password: "",
+    });
   };
 
   return (
@@ -41,10 +78,12 @@ function SignIn() {
           <label className="block text-sm mb-2 text-gray-300">Email</label>
           <input
             type="email"
+            name="email"
+            value={email}
             required
             placeholder="Enter your email"
             className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleOnChange}
           />
         </div>
 
@@ -53,10 +92,12 @@ function SignIn() {
           <label className="block text-sm mb-2 text-gray-300">Password</label>
           <input
             type="password"
+            name="password"
+            value={password}
             required
             placeholder="Enter your password"
             className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleOnChange}
           />
         </div>
 
@@ -78,6 +119,7 @@ function SignIn() {
           </span>
         </p>
       </form>
+      <ToastContainer/>
     </div>
   );
 }

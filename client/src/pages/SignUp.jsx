@@ -1,28 +1,67 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 function SignUp() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const { name, email, password } = inputValue;
+
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setInputValue({
+      ...inputValue,
+      [name]: value,
+    });
+  };
+
+  const handleSuccess = (msg) => {
+    toast.success(msg, {
+      position: "top-left",
+    });
+  };
+
+  const handleError = (err) =>
+    toast.error(err, {
+      position: "top-right",
+    });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:5001/auth/signup", {
-        name,
-        email,
-        password,
-      });
+      const { data } = await axios.post(
+        "http://localhost:5001/auth/signup",
+        {
+          ...inputValue,
+        },
+        { withCredentials: true }
+      );
 
-      alert("Account created successfully!");
-      navigate("/signin");
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } else {
+        handleError(message);
+      }
     } catch (err) {
-      alert(err.response?.data?.message || "Signup failed");
+      console.log(err);
     }
+
+    setInputValue({
+      ...inputValue,
+      name: "",
+      email: "",
+      password: "",
+    });
   };
 
   return (
@@ -40,10 +79,12 @@ function SignUp() {
           <label className="block text-sm mb-2 text-gray-300">Name</label>
           <input
             type="text"
+            name="name"
+            value={name}
             required
             placeholder="Enter your name"
             className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleOnChange}
           />
         </div>
 
@@ -52,10 +93,12 @@ function SignUp() {
           <label className="block text-sm mb-2 text-gray-300">Email</label>
           <input
             type="email"
+            name="email"
+            value={email}
             required
             placeholder="Enter your email"
             className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleOnChange}
           />
         </div>
 
@@ -64,10 +107,12 @@ function SignUp() {
           <label className="block text-sm mb-2 text-gray-300">Password</label>
           <input
             type="password"
+            name="password"
+            value={password}
             required
             placeholder="Enter password"
             className="w-full p-2 bg-black border border-gray-700 rounded focus:outline-none focus:border-orange-500"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleOnChange}
           />
         </div>
 
@@ -88,6 +133,7 @@ function SignUp() {
           </span>
         </p>
       </form>
+      <ToastContainer/>
     </div>
   );
 }
