@@ -1,5 +1,6 @@
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import { Analytics } from "@vercel/analytics/next"
 
 import Home from "./pages/Home";
 import AboutPage from "./components/AboutPage";
@@ -40,6 +41,7 @@ function App() {
         />
       </Routes>
       <Footer />
+      <Analytics/>
     </>
   );
 }
