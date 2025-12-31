@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://glowfox.onrender.com",
+  baseURL: "http://localhost:5001",
   withCredentials: true, // 🔴 REQUIRED
 });
 

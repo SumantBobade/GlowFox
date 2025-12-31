@@ -1,13 +1,13 @@
-import dotenv from 'dotenv'
-import express from 'express';
+import dotenv from "dotenv";
+import express from "express";
 import cors from "cors";
-import cookieParser from 'cookie-parser';
-import path from 'path';
+import cookieParser from "cookie-parser";
+import path from "path";
 
-import userRoute from './routers/user.route.js';
-import gamesRoute from "./routers/game.route.js"
+import userRoute from "./routers/user.route.js";
+import gamesRoute from "./routers/game.route.js";
 import exploreRoute from "./routers/explore.route.js";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const app = express();
 dotenv.config();
@@ -25,22 +25,21 @@ app.set("views", path.join(process.cwd(), "views"));
 app.use(cookieParser());
 
 app.use(
-    cors({
-        origin:[
-             "http://localhost:5173",
-        "https://vercel.com/sumantbobades-projects/glow-fox"
-    ],
-        
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true
-    })
+  cors({
+    origin: ["http://localhost:5173", "https://glow-fox.vercel.app/"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
 );
 
-
-mongoose.connect(process.env.MONGO_URL)
-    .then(() => { console.log("MongDB Connect") })
-    .catch((err) => { console.log(err) });
-
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => {
+    console.log("MongDB Connect");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 app.use("/auth", userRoute);
 app.use("/games", gamesRoute);
@@ -49,7 +48,6 @@ app.get("/test", (req, res) => {
   res.render("create-game");
 });
 
-
 app.listen(process.env.PORT, () => {
-    console.log(`Server is running on ${process.env.PORT} `)
-})
+  console.log(`Server is running on ${process.env.PORT} `);
+});
