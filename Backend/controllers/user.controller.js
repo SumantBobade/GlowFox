@@ -72,7 +72,6 @@ export const updateMyProfile = async (req, res) => {
     req.user._id,
     { name, bio },
     { new: true }
-  ).select("-password");
-
+  );
   res.json(user);
 };

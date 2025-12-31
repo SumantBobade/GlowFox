@@ -22,6 +22,6 @@ export async function gameDetailsHandler(req, res) {
 }
 
 export const getMyGames = async (req, res) => {
-  const games = await Game.find({ creator: req.user._id });
+  const games = await Game.find({ createdBy: req.user._id });
   res.json(games);
 };

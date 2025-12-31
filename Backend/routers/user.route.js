@@ -3,6 +3,7 @@ import { signUpHandler, loginHandler, getMyProfile, updateMyProfile } from '../c
 import { authenticate } from "../middlewares/auth.js";
 import { authorizeRoles, authorizePermissions } from "../middlewares/authorize.js";
 import authMiddleware from '../middlewares/authMiddleware.js';
+import userVerification from '../middlewares/authMiddleware.js';
 
 const route = express.Router();
 
@@ -19,7 +20,7 @@ route.get(
 route.post('/signup', signUpHandler);
 route.post('/login', loginHandler);
 
-route.get("/me", authMiddleware, getMyProfile);
-route.put("/me", authMiddleware, updateMyProfile);
+route.get("/me", userVerification, getMyProfile);
+route.put("/me", userVerification, updateMyProfile);
 
 export default route;

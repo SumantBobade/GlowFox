@@ -26,7 +26,11 @@ app.use(cookieParser());
 
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin:[
+             "http://localhost:5173",
+        "https://vercel.com/sumantbobades-projects/glow-fox"
+    ],
+        
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true
     })

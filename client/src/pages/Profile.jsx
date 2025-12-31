@@ -33,7 +33,7 @@ function Profile() {
   };
 
   const handleUpdate = async () => {
-    await api.put("/user/me", form);
+    await api.put("/auth/me", form);
     setEditing(false);
     fetchProfile();
   };

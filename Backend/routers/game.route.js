@@ -27,6 +27,6 @@ router.get("/", userVerification, async (req, res) => {
 router.get("/my-games", userVerification, getMyGames)
 
 
-router.post("/",upload.single("image") ,gameDetailsHandler);
+router.post("/",upload.single("image"), userVerification ,gameDetailsHandler);
 
 export default router;
