@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import api from "../services/api";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -35,8 +36,8 @@ function SignUp() {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post(
-        "http://localhost:5001/auth/signup",
+      const { data } = await api.post(
+        "/auth/signup",
         {
           ...inputValue,
         },
