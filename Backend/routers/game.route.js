@@ -24,7 +24,14 @@ router.get("/", userVerification, async (req, res) => {
     res.json(games);
 })
 
-router.get("/my-games", userVerification, getMyGames)
+router.get("/my-games", userVerification, async (req, res) => {
+  const games = await Game.find({ owner: req.user._id });
+  res.json(games);
+});
+
+router.post("/", userVerification, createGame);
+router.put("/:id", userVerification, updateGame);
+router.delete("/:id", userVerification, deleteGame);
 
 
 router.post("/",upload.single("image"), userVerification ,gameDetailsHandler);

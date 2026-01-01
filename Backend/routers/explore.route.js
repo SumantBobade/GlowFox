@@ -4,7 +4,7 @@ import Game from "../models/game.model.js";
 
 const router = express.Router();
 
-router.get("/", userVerification, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const games = await Game.find({});
     return res.status(200).json(games);
