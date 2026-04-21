@@ -15,6 +15,7 @@ import Profile from "./pages/Profile";
 import MentorProfile from "./pages/MentorProfile";
 import StudentPortfolio from "./pages/StudentPortfolio";
 import CreatorDashboard from "./pages/CreatorsDashboard";
+import Chatbot from "./components/Chatbox";
 
 function App() {
   return (
@@ -39,7 +40,8 @@ function App() {
           }
         />
       </Routes>
-      <Footer />
+      <Footer />\
+      <Chatbot/>
     </>
   );
 }

@@ -1,32 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import axios from "axios";
-import api from "../services/api"
+import api from "../services/api";
 
 function ExploreGame() {
   const [games, setGames] = useState([]);
-  const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const res = await api.get("/games");
-        setGames(res.data);
+        const res = await api.get("/explore");
+
+        const gameList = Array.isArray(res.data)
+          ? res.data
+          : res.data.games || [];
+
+        setGames(gameList);
       } catch (err) {
-        setError("Failed to load games");
+        if (err.response?.status === 401) {
+          navigate("/signin");
+        } else {
+          setError("Failed to load games");
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchGames();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return (
@@ -64,6 +68,9 @@ function ExploreGame() {
                 <img
                   src={game.image}
                   alt={game.title}
+                  onError={(e) => {
+                    e.target.src = "/default_game.png";
+                  }}
                   className="w-full h-full object-cover hover:scale-105 transition duration-300"
                 />
               </div>
@@ -77,7 +84,10 @@ function ExploreGame() {
                   {game.description}
                 </p>
 
-                <button className="mt-4 text-sm text-orange-400 hover:underline">
+                <button
+                  onClick={() => navigate(`/games/${game._id}`)}
+                  className="mt-4 text-sm text-orange-400 hover:underline"
+                >
                   View Details →
                 </button>
               </div>
@@ -92,7 +102,6 @@ function ExploreGame() {
           </p>
         )}
       </div>
-      <ToastContainer/>
     </section>
   );
 }

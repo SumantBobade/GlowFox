@@ -7,6 +7,7 @@ import path from "path";
 import userRoute from "./routers/user.route.js";
 import gamesRoute from "./routers/game.route.js";
 import exploreRoute from "./routers/explore.route.js";
+import chatRoutes from "./routers/chatRoutes.js";
 import mongoose from "mongoose";
 
 const app = express();
@@ -44,6 +45,7 @@ mongoose
 app.use("/auth", userRoute);
 app.use("/games", gamesRoute);
 app.use("/explore", exploreRoute);
+app.use("/api", chatRoutes);
 app.get("/test", (req, res) => {
   res.render("create-game");
 });
