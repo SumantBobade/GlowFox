@@ -1,4 +1,4 @@
-🎮 GlowFox
+### 🎮 GlowFox
 
 GlowFox is a game development studio and collaboration platform designed for students, indie developers, and game enthusiasts to build, explore, and showcase games together. The platform focuses on community-driven development, mentorship, and next-generation game experiences.
 
